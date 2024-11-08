@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Dynasties MCQ Quiz</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f8ff, #e6f7ff);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Accommodate fixed elements */
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Timer Styling */
+        .timer {
+            position: fixed;          /* Fixes the position relative to the viewport */
+            top: 20px;                /* Positions 20px from the top */
+            right: 20px;              /* Positions 20px from the right */
+            font-size: 1.5rem;        /* Sets a readable font size */
+            color: #d9534f;           /* Sets the text color (red) */
+            font-weight: bold;        /* Makes the text bold */
+            z-index: 1000;            /* Ensures the timer stays above other elements */
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            padding: 10px 15px;       /* Adds padding around the timer text */
+            border-radius: 5px;       /* Rounds the corners of the timer box */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adds a subtle shadow for depth */
+        }
+
+        /* Question Map Sidebar Styling */
+        .question-map {
+            position: fixed;          
+            top: 80px;                /* Positioned below the timer */
+            right: 20px;               /* Positioned on the right */
+            width: 220px;              /* Increased width to better accommodate 80 links */
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 999;             
+            max-height: 90vh;         
+            overflow-y: auto;         
+        }
+
+        .question-map h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+
+        /* Update #questionLinks to Use CSS Grid */
+        #questionLinks {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 5px; /* Adjust the spacing between links as needed */
+            justify-items: center; /* Centers the links within each grid cell */
+        }
+
+        /* Adjust .question-map .question-link Styling */
+        .question-map .question-link {
+            padding: 5px 0; /* Reduces vertical padding */
+            font-size: 0.8rem; /* Slightly smaller font size for better fit */
+            width: 100%; /* Ensures the link takes the full width of the grid cell */
+            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+            border-radius: 4px; /* Maintains rounded corners */
+            text-align: center; /* Centers the text within the link */
+            background-color: #f8f9fa;
+            color: #007bff;
+            text-decoration: none;
+            border: 1px solid #007bff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .question-map .question-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Add Correct and Incorrect Classes for Highlighting */
+        .question-map .question-link.correct {
+            background-color: #28a745; /* Green background */
+            color: #fff; /* White text */
+            border-color: #28a745; /* Green border */
+        }
+
+        .question-map .question-link.incorrect {
+            background-color: #dc3545; /* Red background */
+            color: #fff; /* White text */
+            border-color: #dc3545; /* Red border */
+        }
+
+        /* Add Attempted Class for Highlighting */
+        .question-map .question-link.attempted {
+            background-color: #17a2b8; /* Blue background for attempted questions */
+            color: #fff; /* White text */
+            border-color: #17a2b8; /* Blue border */
+        }
+
+        /* Submit Button and Score Styling */
+        .question-map .submit-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .question-map .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .question-map .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .question-map .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .question-map .result {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #17a2b8;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Quiz Container Styling */
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 900px; /* Increased width to accommodate more questions */
+            width: 100%;
+            margin-right: 240px; /* Accommodates the question map sidebar on the right */
+            margin-top: 50px;     /* Maintains spacing from the top */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        .question p {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .options label:hover {
+            background-color: #e6f0ff;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            color: #17a2b8;
+        }
+
+        /* Feedback Message Styling */
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .feedback.right {
+            color: #28a745; /* Green for correct answers */
+        }
+
+        .feedback.wrong {
+            color: #dc3545; /* Red for incorrect answers */
+        }
+
+        .feedback.not-attempted {
+            color: #6c757d; /* Gray for not attempted */
+        }
+
+        /* Alert when time is low */
+        .alert {
+            animation: blink 1s steps(5, start) infinite;
+        }
+
+        @keyframes blink {
+            to {
+                visibility: hidden;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .quiz-container {
+                max-width: 700px;
+                margin-right: 220px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .quiz-container {
+                max-width: 600px;
+                margin-right: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin-right: 0; /* Removes right margin on small screens */
+            }
+
+            .question-map {
+                display: none; /* Hides the question map on small screens */
+            }
+
+            .toggle-question-map {
+                display: block; /* Shows toggle button on small screens */
+            }
+        }
+
+        /* Toggle Button for Question Map (Visible on Small Screens) */
+        .toggle-question-map {
+            position: fixed;
+            top: 20px;
+            right: 20px; /* Positioned on the right */
+            z-index: 1001;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: none; /* Hidden by default */
+        }
+
+        /* Active State for Question Map on Small Screens */
+        .question-map.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Timer Display -->
+    <div class="timer" id="timer">30:00</div>
+
+    <!-- Toggle Button for Question Map (Visible on Small Screens) -->
+    <button class="toggle-question-map" id="toggleQuestionMap">☰</button>
+
+    <!-- Question Map Sidebar -->
+    <div class="question-map" id="questionMap">
+        <h2>Question Map</h2>
+        <div id="questionLinks">
+            <!-- Question links will be injected here by JavaScript -->
+        </div>
+        <!-- Submit Button and Score Display Below the Question Links -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtn" onclick="checkAnswers()">Submit</button>
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="quiz-container">
+        <h1>Historical Dynasties MCQ Quiz</h1>
+        
+        <form id="quizForm">
+            <!-- Questions will be injected here by JavaScript -->
+        </form>
+
+        <!-- Submit Button and Score Display Below the Questions List -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtnBelow" onclick="checkAnswers()">Submit</button>
+            <div id="resultBelow" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Declare shuffledQuestions globally
+        let shuffledQuestions = [];
+
+        // ============================
+        // Insert Your Questions Array Here
+        // ============================
+        // The questions array should be an array of 80 question objects.
+        // Each question object should have the following structure:
+        // {
+        //     id: 'q1',
+        //     question: 'Your question text here?',
+        //     options: [
+        //         { text: 'Option A', isCorrect: false },
+        //         { text: 'Option B', isCorrect: true },
+        //         { text: 'Option C', isCorrect: false },
+        //         { text: 'Option D', isCorrect: false }
+        //     ]
+        // },
+        // Ensure that you have 80 such objects in the array.
+        // ============================
+        
+        const questions = [
+  // Ratio & Proportion
+  {
+    id: 'q1',
+    question: 'The ratio of the sum and the difference of two numbers is 6:5. Find the ratio of the two numbers.',
+    options: [
+      { text: '3:2', isCorrect: true },
+      { text: '7:5', isCorrect: false },
+      { text: '2:3', isCorrect: false },
+      { text: '11:1', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q2',
+    question: 'A triangle with side lengths proportional to 7, 24, and 30 is:',
+    options: [
+      { text: 'Acute-angled', isCorrect: false },
+      { text: 'Not possible', isCorrect: true },
+      { text: 'Obtuse-angled', isCorrect: false },
+      { text: 'Right-angled', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q3',
+    question: 'Numbers A and B are 0% and 50%, respectively, more than number C. The ratio of A to B is:',
+    options: [
+      { text: '13:15', isCorrect: false },
+      { text: '4:5', isCorrect: false },
+      { text: '15:13', isCorrect: true },
+      { text: '5:4', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q4',
+    question: 'An amount of ₹1,003 is to be distributed among A, B, and C in the ratio of 11:23:25. How many rupees would B get more than A?',
+    options: [
+      { text: '₹238', isCorrect: false },
+      { text: '₹29', isCorrect: false },
+      { text: '₹187', isCorrect: true },
+      { text: '₹204', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q5',
+    question: 'Three numbers are in the proportion of 3:8:15, and their LCM is 8,280. What is their HCF?',
+    options: [
+      { text: '60', isCorrect: true },
+      { text: '57', isCorrect: false },
+      { text: '69', isCorrect: false },
+      { text: '75', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q6',
+    question: 'The sum of three numbers is 98. If the ratio of the first to the second is 2:3 and that of the second to the third is 5:8, then the third number is:',
+    options: [
+      { text: '30', isCorrect: false },
+      { text: '20', isCorrect: false },
+      { text: '49', isCorrect: false },
+      { text: '48', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q7',
+    question: 'A and B entered into a partnership with investments in the ratio 3:5. After a few months, A withdrew his money. At the end of the year, they received profit in the ratio 2:5. After how many months did A withdraw?',
+    options: [
+      { text: '6', isCorrect: true },
+      { text: '9', isCorrect: false },
+      { text: '7', isCorrect: false },
+      { text: '8', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q8',
+    question: 'A, B, and C divide an amount of ₹10,500 amongst themselves in the ratio 5:7:9. If each one gets ₹500 more, then what will be the new ratio of the amounts for A, B, and C?',
+    options: [
+      { text: '5:7:9', isCorrect: false },
+      { text: '3:4:5', isCorrect: false },
+      { text: '7:9:11', isCorrect: false },
+      { text: '5:6:7', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q9',
+    question: 'The ratio of the profits of P and Q is 5:8. What is their investment ratio if their investment time period ratio is 3:5?',
+    options: [
+      { text: '13:25', isCorrect: false },
+      { text: '12:25', isCorrect: false },
+      { text: '24:25', isCorrect: true },
+      { text: '25:24', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q10',
+    question: 'An alloy contains 40% silver, 30% copper, and 30% nickel. How much silver (in kg) should be added to 15 kg of the alloy so that the new alloy contains 50% silver?',
+    options: [
+      { text: '5', isCorrect: false },
+      { text: '10', isCorrect: true },
+      { text: '12', isCorrect: false },
+      { text: '20', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q11',
+    question: 'Three partners X, Y, and Z started their business by investing ₹40,000, ₹38,000, and ₹38,000, respectively. After 6 months, X and Z made additional investments of ₹20,000 and ₹15,000, respectively, whereas Y withdrew ₹8,000. Find the share of Y (in ₹) in the total profit of ₹38,880 made at the end of the year.',
+    options: [
+      { text: '₹10,950', isCorrect: false },
+      { text: '₹10,200', isCorrect: true },
+      { text: '₹10,880', isCorrect: false },
+      { text: '₹9,800', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q12',
+    question: 'Three partners shared the profit in a business in the proportion of 9:8:11. They invested their capitals for 4 months, 6 months, and 18 months, respectively. What was the ratio of their capitals?',
+    options: [
+      { text: '27:48:22', isCorrect: false },
+      { text: '81:48:22', isCorrect: false },
+      { text: '81:16:66', isCorrect: true },
+      { text: '27:16:66', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q13',
+    question: 'What would be the ratio of the areas of two circles, Circle-A and Circle-B, the radii of which are 4 cm and 8 cm, respectively?',
+    options: [
+      { text: '1:2', isCorrect: false },
+      { text: '1:16', isCorrect: false },
+      { text: '1:8', isCorrect: false },
+      { text: '1:4', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q14',
+    question: 'If p is the third proportional to 8 and 20, and q is the fourth proportional to 3, 5, and 24, then find the value of (2p + q).',
+    options: [
+      { text: '140', isCorrect: false },
+      { text: '126', isCorrect: true },
+      { text: '90', isCorrect: false },
+      { text: '104', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q15',
+    question: 'If p is the third proportional to 3 and 9, then what is the fourth proportional to 6, p, and 4?',
+    options: [
+      { text: '3/2', isCorrect: false },
+      { text: '10', isCorrect: false },
+      { text: '18', isCorrect: true },
+      { text: '2/3', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q16',
+    question: 'Fourth proportion to 12, 18, and 6 is equal to the third proportion to 4 and k. What is the value of k?',
+    options: [
+      { text: '6', isCorrect: true },
+      { text: '4/3', isCorrect: false },
+      { text: '6.5', isCorrect: false },
+      { text: '4', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q17',
+    question: 'The monthly income of three cricketers Ankit, Sanjay, and Roshan, from different sources, are in the ratio of 12:9:7, and their expenditures are in the ratio 15:9:8. If Ankit saves 25% of his income for future investments, what is the ratio of the savings of Ankit, Sanjay, and Roshan?',
+    options: [
+      { text: '15:18:11', isCorrect: false },
+      { text: '25:16:13', isCorrect: false },
+      { text: '5:8:7', isCorrect: true },
+      { text: '23:18:11', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q18',
+    question: 'The ratio of two numbers A and B is 5:8. If 5 is added to each of A and B, then the ratio becomes 2:3. The difference between A and B is:',
+    options: [
+      { text: '15', isCorrect: false },
+      { text: '20', isCorrect: true },
+      { text: '12', isCorrect: false },
+      { text: '10', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q19',
+    question: 'Find the ratio between the fourth proportional of 12, 16, and 6 and the third proportional of 4 and 6.',
+    options: [
+      { text: '4:3', isCorrect: false },
+      { text: '3:2', isCorrect: false },
+      { text: '11:5', isCorrect: false },
+      { text: '8:9', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q20',
+    question: 'Rajesh purchased 6 mangoes, 3 bananas, and 10 guavas for ₹136. If the ratio of the cost per piece of mangoes, bananas, and guavas is 3:2:1, what will be the total cost of 1 mango, 2 bananas, and 3 guavas?',
+    options: [
+      { text: '₹27', isCorrect: false },
+      { text: '₹38', isCorrect: false },
+      { text: '₹40', isCorrect: true },
+      { text: '₹46', isCorrect: false }
+    ]
+  },
+
+  // Mixtures and Alligations
+  {
+    id: 'q21',
+    question: 'A jar contains a mixture of two liquids A and B in the ratio 4:1. When 10 liters of the mixture is taken out and 10 liters of liquid B is poured into the jar, this ratio becomes 2:3. The quantity of liquid A contained in the jar initially was:',
+    options: [
+      { text: '4 liters', isCorrect: false },
+      { text: '8 liters', isCorrect: false },
+      { text: '16 liters', isCorrect: true },
+      { text: '40 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q22',
+    question: 'A vessel contains a mixture of milk and water in the ratio 5:3. If 16 liters of this mixture is replaced with 16 liters of water, the ratio of milk to water becomes 1:1. What is the initial quantity of milk in the vessel?',
+    options: [
+      { text: '30 liters', isCorrect: false },
+      { text: '32 liters', isCorrect: true },
+      { text: '36 liters', isCorrect: false },
+      { text: '40 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q23',
+    question: 'In what ratio must a grocer mix two varieties of pulses costing ₹15 per kg and ₹20 per kg respectively so as to get a mixture worth ₹16.50 per kg?',
+    options: [
+      { text: '7:3', isCorrect: true },
+      { text: '5:7', isCorrect: false },
+      { text: '2:3', isCorrect: false },
+      { text: '3:5', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q24',
+    question: 'A mixture contains alcohol and water in the ratio 4:3. If 5 liters of water is added to the mixture, the ratio becomes 4:5. What is the quantity of alcohol in the mixture?',
+    options: [
+      { text: '10 liters', isCorrect: false },
+      { text: '12 liters', isCorrect: true },
+      { text: '15 liters', isCorrect: false },
+      { text: '16 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q25',
+    question: 'Two alloys contain copper and zinc in the ratios 5:3 and 1:2 respectively. In what ratio should these alloys be mixed to get a new alloy containing copper and zinc in the ratio 2:3?',
+    options: [
+      { text: '3:5', isCorrect: false },
+      { text: '4:7', isCorrect: false },
+      { text: '5:11', isCorrect: true },
+      { text: '7:9', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q26',
+    question: 'A container has 60 liters of milk. From this container, 6 liters of milk was taken out and replaced with water. This process was repeated two more times. How much milk is now left in the container?',
+    options: [
+      { text: '43.74 liters', isCorrect: false },
+      { text: '44.58 liters', isCorrect: false },
+      { text: '45.76 liters', isCorrect: false },
+      { text: '46.87 liters', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q27',
+    question: 'A mixture of 40 liters of milk and water contains 10% water. How much water must be added to make the water 20% in the new mixture?',
+    options: [
+      { text: '5 liters', isCorrect: true },
+      { text: '4 liters', isCorrect: false },
+      { text: '6 liters', isCorrect: false },
+      { text: '7 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q28',
+    question: 'A can contains a mixture of two liquids A and B in the ratio 7:5. When 9 liters of the mixture is drawn off and the can is filled with B, the ratio of A and B becomes 7:9. How many liters of liquid A was contained by the can initially?',
+    options: [
+      { text: '10 liters', isCorrect: false },
+      { text: '20 liters', isCorrect: false },
+      { text: '21 liters', isCorrect: true },
+      { text: '25 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q29',
+    question: 'A vessel contains 20 liters of a mixture of milk and water in the ratio 3:1. How much milk must be added to make the ratio 4:1?',
+    options: [
+      { text: '2 liters', isCorrect: false },
+      { text: '2.5 liters', isCorrect: true },
+      { text: '3 liters', isCorrect: false },
+      { text: '4 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q30',
+    question: 'A solution contains milk and water in the ratio 3:1. If 12 liters of the mixture are removed and the same amount of water is added, the ratio of milk to water becomes 1:1. What is the initial quantity of milk?',
+    options: [
+      { text: '12 liters', isCorrect: false },
+      { text: '18 liters', isCorrect: false },
+      { text: '24 liters', isCorrect: true },
+      { text: '36 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q31',
+    question: 'In what ratio should milk costing ₹12 per liter be mixed with milk costing ₹20 per liter to make a mixture worth ₹15 per liter?',
+    options: [
+      { text: '1:2', isCorrect: false },
+      { text: '2:1', isCorrect: true },
+      { text: '3:5', isCorrect: false },
+      { text: '5:7', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q32',
+    question: 'A vessel contains a mixture of acid and water in the ratio 3:2. 20% of the mixture is taken out and replaced with water, and the ratio becomes 12:13. Find the initial quantity of the mixture.',
+    options: [
+      { text: '30 liters', isCorrect: false },
+      { text: '40 liters', isCorrect: true },
+      { text: '45 liters', isCorrect: false },
+      { text: '60 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q33',
+    question: 'A solution contains milk and water in the ratio 7:2. How much water should be added to 81 liters of this solution so that the ratio becomes 3:2?',
+    options: [
+      { text: '27 liters', isCorrect: true },
+      { text: '24 liters', isCorrect: false },
+      { text: '18 liters', isCorrect: false },
+      { text: '15 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q34',
+    question: 'A mixture contains alcohol and water in the ratio 5:2. If 14 liters of this mixture is replaced with 14 liters of water, the ratio of alcohol to water becomes 1:1. What is the initial quantity of alcohol?',
+    options: [
+      { text: '20 liters', isCorrect: false },
+      { text: '25 liters', isCorrect: false },
+      { text: '28 liters', isCorrect: true },
+      { text: '35 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q35',
+    question: 'A container has a mixture of milk and water in the ratio 9:1. If 10 liters of water is added to the container, the ratio of milk to water becomes 3:1. What is the initial quantity of water?',
+    options: [
+      { text: '5 liters', isCorrect: true },
+      { text: '10 liters', isCorrect: false },
+      { text: '15 liters', isCorrect: false },
+      { text: '20 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q36',
+    question: 'A grocer has a mixture of two kinds of rice worth ₹24 per kg and ₹30 per kg respectively. In what ratio must he mix them to make a mixture worth ₹26 per kg?',
+    options: [
+      { text: '1:2', isCorrect: false },
+      { text: '2:3', isCorrect: false },
+      { text: '3:2', isCorrect: false },
+      { text: '2:1', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q37',
+    question: 'A solution contains 80% acid and 20% water. If 20 liters of water is added to this solution, the percentage of acid becomes 60%. Find the initial quantity of acid in the solution.',
+    options: [
+      { text: '80 liters', isCorrect: false },
+      { text: '90 liters', isCorrect: false },
+      { text: '100 liters', isCorrect: true },
+      { text: '120 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q38',
+    question: 'A mixture of 60 liters of milk and water contains 80% milk. How much water should be added to the mixture so that milk becomes 75% of the new mixture?',
+    options: [
+      { text: '5 liters', isCorrect: false },
+      { text: '10 liters', isCorrect: true },
+      { text: '15 liters', isCorrect: false },
+      { text: '20 liters', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q39',
+    question: 'A solution contains sugar and water in the ratio 3:5. How much water must be added to make the ratio 3:8?',
+    options: [
+      { text: 'Half of the solution\'s initial volume', isCorrect: false },
+      { text: 'Twice the initial water volume', isCorrect: false },
+      { text: 'Equal to sugar\'s initial volume', isCorrect: false },
+      { text: 'Equal to the initial solution volume', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q40',
+    question: 'In what proportion should tea worth ₹60/kg be mixed with tea worth ₹90/kg to make a blend worth ₹75/kg?',
+    options: [
+      { text: '1:2', isCorrect: false },
+      { text: '1:1', isCorrect: true },
+      { text: '2:1', isCorrect: false },
+      { text: '3:1', isCorrect: false }
+    ]
+  },
+
+  // Average and Ages
+  {
+    id: 'q41',
+    question: 'The average age of 12 players of a team is 25 years. If the captain\'s age is included, the average age increases by 1 year. What is the age of the captain?',
+    options: [
+      { text: '25 years', isCorrect: false },
+      { text: '36 years', isCorrect: false },
+      { text: '38 years', isCorrect: true },
+      { text: '26 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q42',
+    question: 'The average age of husband, wife, and their child 3 years ago was 27 years, and that of wife and the child 5 years ago was 20 years. What is the present age of the husband?',
+    options: [
+      { text: '35 years', isCorrect: false },
+      { text: '40 years', isCorrect: true },
+      { text: '50 years', isCorrect: false },
+      { text: '45 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q43',
+    question: 'The present ages of two persons are 36 and 50 years respectively. After how many years will the ratio of their ages be 3:4?',
+    options: [
+      { text: '3 years', isCorrect: false },
+      { text: '4 years', isCorrect: false },
+      { text: '7 years', isCorrect: false },
+      { text: '6 years', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q44',
+    question: 'The present ages of A and B are in the ratio 5:6 respectively. After seven years, this ratio becomes 6:7. What is the present age of A in years?',
+    options: [
+      { text: '35 years', isCorrect: true },
+      { text: '32 years', isCorrect: false },
+      { text: '33 years', isCorrect: false },
+      { text: '30 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q45',
+    question: 'Ravi is 12 years younger than Surya. Ravi’s age is 40% of the sum of his and Surya’s age. What will be Surya’s age 9 years hence?',
+    options: [
+      { text: '36 years', isCorrect: false },
+      { text: '24 years', isCorrect: false },
+      { text: '33 years', isCorrect: false },
+      { text: '45 years', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q46',
+    question: 'The ratio of present ages of Rahul and his sister is 3:4. Ten years ago, the ratio of their ages was 13:19. What is Rahul’s present age (in years)?',
+    options: [
+      { text: '36 years', isCorrect: true },
+      { text: '48 years', isCorrect: false },
+      { text: '42 years', isCorrect: false },
+      { text: '54 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q47',
+    question: 'The ratio of ages of the father and mother was 11:10 when their son was born. The ratio of ages of the father and mother will be 19:18 when the son will be twice his present age. What is the ratio of present ages of father and mother?',
+    options: [
+      { text: '15:14', isCorrect: true },
+      { text: '14:13', isCorrect: false },
+      { text: '16:15', isCorrect: false },
+      { text: '17:16', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q48',
+    question: 'The ratio of present ages of Simi and Seema is 5:4. After 9 years, the ratio of their ages will be 8:7. What is Simi’s present age (in years)?',
+    options: [
+      { text: '12 years', isCorrect: false },
+      { text: '15 years', isCorrect: true },
+      { text: '24 years', isCorrect: false },
+      { text: '21 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q49',
+    question: 'Five years ago, the ratio of the ages of a father and his son was 5:3. Which of the following cannot be the ratio of their ages 10 years from now?',
+    options: [
+      { text: '3:2', isCorrect: false },
+      { text: '8:7', isCorrect: false },
+      { text: '6:5', isCorrect: false },
+      { text: '7:3', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q50',
+    question: 'The ratio of the present age of Mahesh and Ajay is 3:2 respectively. After 8 years, the ratio of their ages will be 11:8. What will be the present age of Mahesh’s son if his age is half of the present age of Ajay?',
+    options: [
+      { text: '15 years', isCorrect: false },
+      { text: '16 years', isCorrect: true },
+      { text: '12 years', isCorrect: false },
+      { text: '18 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q51',
+    question: 'A family consists of two grandparents, three parents, and four grandchildren. The average age of the grandparents is 65 years, that of the parents is 32 years, and that of the grandchildren is 8 years. What is the average age of the family?',
+    options: [
+      { text: '28 years', isCorrect: false },
+      { text: '28.67 years', isCorrect: true },
+      { text: '28.33 years', isCorrect: false },
+      { text: 'None of these', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q52',
+    question: 'The ratio of the ages of Arun and Anand is 3:1. After 5 years, Arun\'s age will be 5 more than twice Anand’s age. What is the present age of Arun?',
+    options: [
+      { text: '40 years', isCorrect: false },
+      { text: '30 years', isCorrect: true },
+      { text: '35 years', isCorrect: false },
+      { text: '25 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q53',
+    question: 'The average age of husband, wife, and their child 4 years ago was 26 years, and that of wife and the child 3 years ago was 22 years. What is the present age of the husband?',
+    options: [
+      { text: '44 years', isCorrect: false },
+      { text: '46 years', isCorrect: false },
+      { text: '42 years', isCorrect: false },
+      { text: '40 years', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q54',
+    question: 'The sum of ages of a mother and daughter is 50 years. Also, 5 years ago, the mother\'s age was four times the age of the daughter. Find the present age of the daughter.',
+    options: [
+      { text: '10 years', isCorrect: true },
+      { text: '15 years', isCorrect: false },
+      { text: '20 years', isCorrect: false },
+      { text: '25 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q55',
+    question: 'The average of five consecutive numbers is 33. What is the largest number?',
+    options: [
+      { text: '35', isCorrect: true },
+      { text: '36', isCorrect: false },
+      { text: '34', isCorrect: false },
+      { text: '37', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q56',
+    question: 'The average age of 8 children in a group is 12 years. If we add the teacher’s age, the average increases by 2 years. What is the teacher’s age?',
+    options: [
+      { text: '28 years', isCorrect: false },
+      { text: '26 years', isCorrect: true },
+      { text: '24 years', isCorrect: false },
+      { text: '22 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q57',
+    question: 'The average age of A, B, and C is 25 years. If the ratio of their ages is 3:5:7, what is C’s age?',
+    options: [
+      { text: '30 years', isCorrect: false },
+      { text: '35 years', isCorrect: false },
+      { text: '40 years', isCorrect: false },
+      { text: '35 years', isCorrect: true } // There seems to be inconsistency in options
+    ]
+  },
+  {
+    id: 'q58',
+    question: 'The average age of a group of 7 people increases by 2 years if one person aged 18 is replaced by a new person. What is the age of the new person?',
+    options: [
+      { text: '32 years', isCorrect: true },
+      { text: '30 years', isCorrect: false },
+      { text: '34 years', isCorrect: false },
+      { text: '28 years', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q59',
+    question: 'The average of 15 results is 15. If the average of the first 7 results is 14 and that of the last 7 results is 17, what is the 8th result?',
+    options: [
+      { text: '17', isCorrect: false },
+      { text: '15', isCorrect: true },
+      { text: '21', isCorrect: false },
+      { text: '20', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q60',
+    question: 'The average age of A, B, and C is 25 years. If the ratio of their ages is 3:5:7, what is C’s age?',
+    options: [
+      { text: '30 years', isCorrect: false },
+      { text: '35 years', isCorrect: true },
+      { text: '40 years', isCorrect: false },
+      { text: '45 years', isCorrect: false }
+    ]
+  },
+
+  // Percentage
+  {
+    id: 'q61',
+    question: 'If A\'s income is 50% less than B\'s, then B\'s income is what percent more than A\'s?',
+    options: [
+      { text: '125%', isCorrect: false },
+      { text: '100%', isCorrect: true },
+      { text: '75%', isCorrect: false },
+      { text: '50%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q62',
+    question: '1.14 expressed as a percent of 1.9 is:',
+    options: [
+      { text: '6%', isCorrect: false },
+      { text: '10%', isCorrect: false },
+      { text: '60%', isCorrect: true },
+      { text: '90%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q63',
+    question: 'If 60% of A equals 48% of B, then the ratio A is:',
+    options: [
+      { text: '9:20', isCorrect: false },
+      { text: '20:9', isCorrect: false },
+      { text: '4:5', isCorrect: true },
+      { text: '5:4', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q64',
+    question: 'Two successive price increases of 10% each are equivalent to a single price increase of:',
+    options: [
+      { text: '19%', isCorrect: false },
+      { text: '20%', isCorrect: false },
+      { text: '21%', isCorrect: true },
+      { text: '22%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q65',
+    question: 'The average of odd numbers up to 100 is:',
+    options: [
+      { text: '50.5', isCorrect: false },
+      { text: '50', isCorrect: true },
+      { text: '49.5', isCorrect: false },
+      { text: '49', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q66',
+    question: 'If A\'s income is 25% less than B\'s income, by how much percent is B\'s income more than A\'s?',
+    options: [
+      { text: '25%', isCorrect: false },
+      { text: '30%', isCorrect: false },
+      { text: '100/3%', isCorrect: true },
+      { text: '50%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q67',
+    question: 'If on a marked price, the difference of selling prices with a discount of 30% and two successive discounts of 20% and 10% is Rs. 72, then the marked price (in rupees) is:',
+    options: [
+      { text: '3,600', isCorrect: true },
+      { text: '3,000', isCorrect: false },
+      { text: '2,500', isCorrect: false },
+      { text: '2,400', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q68',
+    question: 'If an electricity bill is paid before the due date, one gets a reduction of 4% on the amount of the bill. By paying the bill before the due date, a person got a reduction of Rs. 13. The amount of his electricity bill was:',
+    options: [
+      { text: 'Rs. 125', isCorrect: false },
+      { text: 'Rs. 225', isCorrect: false },
+      { text: 'Rs. 325', isCorrect: true },
+      { text: 'Rs. 425', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q69',
+    question: 'Successive discounts of 10%, 20%, and 30% are equivalent to a single discount of:',
+    options: [
+      { text: '60%', isCorrect: false },
+      { text: '49.6%', isCorrect: true },
+      { text: '40.5%', isCorrect: false },
+      { text: '36%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q70',
+    question: 'The price of an article was first increased by 10% and then again by 20%. If the last increased price is Rs. 33, the original price was:',
+    options: [
+      { text: 'Rs. 30', isCorrect: false },
+      { text: 'Rs. 27.50', isCorrect: false },
+      { text: 'Rs. 26.50', isCorrect: false },
+      { text: 'Rs. 25', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q71',
+    question: 'If each side of a square is increased by 10%, its area will be increased by:',
+    options: [
+      { text: '10%', isCorrect: false },
+      { text: '21%', isCorrect: true },
+      { text: '44%', isCorrect: false },
+      { text: '100%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q72',
+    question: 'If the length of a rectangle is increased by 10% and its breadth is decreased by 10%, the change in its area will be:',
+    options: [
+      { text: '1% increase', isCorrect: false },
+      { text: '1% decrease', isCorrect: true },
+      { text: '10% increase', isCorrect: false },
+      { text: 'No change', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q73',
+    question: 'A is 50% as efficient as B. C does half of the work done by A and B together. If C alone does the work in 20 days, then A, B, and C together can do the work in:',
+    options: [
+      { text: '17/3 days', isCorrect: false },
+      { text: '20/3 days', isCorrect: false },
+      { text: '6 days', isCorrect: true },
+      { text: '7 days', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q74',
+    question: 'If a number is first increased by 20% and then decreased by 20%, the net change in the number is:',
+    options: [
+      { text: '4% increase', isCorrect: false },
+      { text: '4% decrease', isCorrect: true },
+      { text: 'No change', isCorrect: false },
+      { text: '8% decrease', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q75',
+    question: 'If the price of a commodity increases by 30%, then by what percent must a consumer reduce his consumption so as not to increase his expenditure?',
+    options: [
+      { text: '23.07%', isCorrect: true },
+      { text: '20%', isCorrect: false },
+      { text: '25%', isCorrect: false },
+      { text: '21%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q76',
+    question: 'A salary is increased by 20% and then again by 10%. Find the effective percentage increase.',
+    options: [
+      { text: '30%', isCorrect: false },
+      { text: '31%', isCorrect: true },
+      { text: '32%', isCorrect: false },
+      { text: '33%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q77',
+    question: 'A student\'s marks were incorrectly recorded as 83 instead of 63. Due to this mistake, the percentage error in his marks is:',
+    options: [
+      { text: '10%', isCorrect: false },
+      { text: '20%', isCorrect: true },
+      { text: '25%', isCorrect: false },
+      { text: '30%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q78',
+    question: 'If the area of a circle is increased by 21%, then the radius of the circle is increased by:',
+    options: [
+      { text: '10%', isCorrect: true },
+      { text: '12%', isCorrect: false },
+      { text: '21%', isCorrect: false },
+      { text: '24%', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q79',
+    question: 'A man had 10% loss by selling an item. If he had sold it for Rs. 27 more, he would have gained 10%. Find the cost price of the item.',
+    options: [
+      { text: 'Rs. 135', isCorrect: true },
+      { text: 'Rs. 125', isCorrect: false },
+      { text: 'Rs. 150', isCorrect: false },
+      { text: 'Rs. 120', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q80',
+    question: 'A man spends 60% of his income. If his income increases by 20% and his expenditure increases by 10%, then the percentage increase in his savings is:',
+    options: [
+      { text: '33.33%', isCorrect: false },
+      { text: '40%', isCorrect: true },
+      { text: '50%', isCorrect: false },
+      { text: '60%', isCorrect: false }
+    ]
+  }
+];
+
+
+        // Function to shuffle an array using Fisher-Yates algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to render the questions dynamically
+        function renderQuestions() {
+            const quizForm = document.getElementById('quizForm');
+            const questionsArray = getQuestions(); // Retrieve the questions array
+            if (!questionsArray || !Array.isArray(questionsArray) || questionsArray.length < 80) {
+                quizForm.innerHTML = '<p>Insufficient questions available. Please ensure there are at least 80 questions in the questions array.</p>';
+                return;
+            }
+
+            // Randomly select 80 questions from the available questions
+            const selectedQuestions = getRandomQuestions(questionsArray, 80);
+
+            // Assign shuffledQuestions to the global variable
+            shuffledQuestions = shuffleArray([...selectedQuestions]); // Create a copy and shuffle
+
+            shuffledQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.id = `question-${index + 1}`; // Assign unique ID
+
+                // Question text
+                const questionText = document.createElement('p');
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                // Options
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                // Shuffle options and assign back to q.options
+                q.options = shuffleArray([...q.options]);
+                const shuffledOptions = q.options;
+
+                // Assign labels A, B, C, D dynamically
+                const labels = ['A', 'B', 'C', 'D'];
+
+                shuffledOptions.forEach((option, optIndex) => {
+                    const optionId = `${q.id}_option${optIndex + 1}`; // Unique ID for each option
+
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = optionId;
+                    radioInput.name = q.id;
+                    radioInput.value = labels[optIndex]; // Assign label as value
+
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = `${labels[optIndex]}) ${option.text}`;
+
+                    optionsDiv.appendChild(radioInput);
+                    optionsDiv.appendChild(label);
+
+                    // Add Attempted Class when an option is selected
+                    radioInput.addEventListener('change', function() {
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink && !questionMapLink.classList.contains('correct') && !questionMapLink.classList.contains('incorrect')) {
+                            questionMapLink.classList.add('attempted');
+                        }
+                    });
+                });
+
+                questionDiv.appendChild(optionsDiv);
+
+                // Add Feedback Div Below Options
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                feedbackDiv.id = `feedback-${index + 1}`; // Unique ID for each feedback div
+                questionDiv.appendChild(feedbackDiv);
+
+                quizForm.appendChild(questionDiv);
+            });
+
+            generateQuestionMap(shuffledQuestions.length);
+        }
+
+        // Function to retrieve the questions array
+        function getQuestions() {
+            // Ensure that the 'questions' array is defined and contains 80 questions
+            return questions; // Assuming 'questions' is defined globally
+        }
+
+        // Function to randomly select n questions from the questions array
+        function getRandomQuestions(questionsArray, n) {
+            const shuffled = shuffleArray([...questionsArray]);
+            return shuffled.slice(0, n);
+        }
+
+        // Function to generate the Question Map links
+        function generateQuestionMap(totalQuestions) {
+            const questionLinksDiv = document.getElementById('questionLinks');
+            questionLinksDiv.innerHTML = ''; // Clear any existing links
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const link = document.createElement('a');
+                link.href = `#question-${i}`;
+                link.classList.add('question-link');
+                link.textContent = `Q${i}`;
+
+                questionLinksDiv.appendChild(link);
+            }
+        }
+
+        // Timer Functionality
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const countdown = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                // Add alert class when time is less than 1 minute
+                if (timer <= 60 && timer > 0) { // 60 seconds = 1 minute
+                    display.classList.add('alert');
+                }
+
+                if (--timer < 0) {
+                    clearInterval(countdown);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        // Function to automatically submit the quiz when time is up
+        function autoSubmit() {
+            alert("Time's up! The quiz will now be submitted.");
+            checkAnswers();
+        }
+
+        // Initialize the quiz on page load
+        window.onload = function () {
+            renderQuestions(); // Render questions on page load
+            const thirtyMinutes = 60 * 30, // 30 minutes in seconds
+                  display = document.getElementById('timer');
+            startTimer(thirtyMinutes, display);
+        };
+
+        // Function to check answers and display the result
+        function checkAnswers() {
+            let score = 0;
+            let totalQuestions = shuffledQuestions.length; // Total number of questions
+
+            shuffledQuestions.forEach((q, index) => { // Iterate over each question
+                const selectedOption = document.querySelector(`input[name="${q.id}"]:checked`);
+                const feedbackDiv = document.getElementById(`feedback-${index + 1}`);
+                
+                if (selectedOption) {
+                    // Get the selected label (A, B, C, D)
+                    const selectedLabel = selectedOption.value;
+                    // Map label to option index
+                    const labelIndex = ['A', 'B', 'C', 'D'].indexOf(selectedLabel);
+                    if (labelIndex !== -1 && q.options[labelIndex].isCorrect) {
+                        score += 1; // Add 1 mark for correct answer
+
+                        // Mark the question link as correct in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('correct');
+                            questionMapLink.classList.remove('incorrect', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Right';
+                            feedbackDiv.classList.add('right');
+                            feedbackDiv.classList.remove('wrong', 'not-attempted');
+                        }
+                    } else {
+                        score -= 0.5; // Deduct 0.5 marks for incorrect answer
+
+                        // Mark the question link as incorrect in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('incorrect');
+                            questionMapLink.classList.remove('correct', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Wrong';
+                            feedbackDiv.classList.add('wrong');
+                            feedbackDiv.classList.remove('right', 'not-attempted');
+                        }
+                    }
+                } else {
+                    // If the question was not answered, mark as not attempted
+                    const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                    if (questionMapLink) {
+                        // Remove both classes if the question was not answered
+                        questionMapLink.classList.remove('correct', 'incorrect', 'attempted');
+                    }
+
+                    // Update Feedback Below the Question
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = 'Not Attempted';
+                        feedbackDiv.classList.add('not-attempted');
+                        feedbackDiv.classList.remove('right', 'wrong');
+                    }
+                }
+            });
+
+            // Round the score to one decimal place
+            score = Math.round(score * 10) / 10;
+
+            // Update the result in the Question Map Sidebar
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Update the result below the questions list
+            const resultDivBelow = document.getElementById('resultBelow');
+            resultDivBelow.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Disable all inputs to prevent changes after submission
+            const inputs = document.querySelectorAll('input[type="radio"]');
+            inputs.forEach(input => {
+                input.disabled = true;
+            });
+
+            // Disable the submit buttons to prevent multiple submissions
+            const submitButton = document.getElementById('submitBtn');
+            submitButton.disabled = true;
+
+            const submitButtonBelow = document.getElementById('submitBtnBelow');
+            if (submitButtonBelow) {
+                submitButtonBelow.disabled = true;
+            }
+        }
+
+        // Toggle Question Map on small screens
+        const toggleBtn = document.getElementById('toggleQuestionMap');
+        const questionMap = document.getElementById('questionMap');
+
+        toggleBtn.addEventListener('click', () => {
+            questionMap.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

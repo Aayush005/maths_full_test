@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historical Dynasties MCQ Quiz</title>
+    <title>Khilji Dynasty MCQ Quiz</title>
     <style>
         /* Reset some default styles */
         * {
@@ -43,7 +43,7 @@
             position: fixed;          
             top: 80px;                /* Positioned below the timer */
             right: 20px;               /* Positioned on the right */
-            width: 220px;              /* Increased width to better accommodate 80 links */
+            width: 180px;              /* Increased width to accommodate 5 columns */
             background-color: rgba(255, 255, 255, 0.9); 
             padding: 15px;
             border-radius: 8px;
@@ -71,7 +71,7 @@
         /* Adjust .question-map .question-link Styling */
         .question-map .question-link {
             padding: 5px 0; /* Reduces vertical padding */
-            font-size: 0.8rem; /* Slightly smaller font size for better fit */
+            font-size: 0.9rem; /* Slightly smaller font size for better fit */
             width: 100%; /* Ensures the link takes the full width of the grid cell */
             box-sizing: border-box; /* Includes padding and border in the element's total width and height */
             border-radius: 4px; /* Maintains rounded corners */
@@ -154,9 +154,9 @@
             padding: 30px 40px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-width: 900px; /* Increased width to accommodate more questions */
+            max-width: 800px;
             width: 100%;
-            margin-right: 240px; /* Accommodates the question map sidebar on the right */
+            margin-right: 200px; /* Accommodates the question map sidebar on the right */
             margin-top: 50px;     /* Maintains spacing from the top */
         }
 
@@ -260,20 +260,6 @@
         }
 
         /* Responsive Design */
-        @media (max-width: 1200px) {
-            .quiz-container {
-                max-width: 700px;
-                margin-right: 220px;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .quiz-container {
-                max-width: 600px;
-                margin-right: 200px;
-            }
-        }
-
         @media (max-width: 768px) {
             .quiz-container {
                 margin-right: 0; /* Removes right margin on small screens */
@@ -312,7 +298,7 @@
 </head>
 <body>
     <!-- Timer Display -->
-    <div class="timer" id="timer">30:00</div>
+    <div class="timer" id="timer">10:00</div>
 
     <!-- Toggle Button for Question Map (Visible on Small Screens) -->
     <button class="toggle-question-map" id="toggleQuestionMap">☰</button>
@@ -331,7 +317,7 @@
     </div>
 
     <div class="quiz-container">
-        <h1>Historical Dynasties MCQ Quiz</h1>
+        <h1>Khilji Dynasty MCQ Quiz</h1>
         
         <form id="quizForm">
             <!-- Questions will be injected here by JavaScript -->
@@ -348,25 +334,8 @@
         // Declare shuffledQuestions globally
         let shuffledQuestions = [];
 
-        // ============================
-        // Insert Your Questions Array Here
-        // ============================
-        // The questions array should be an array of 80 question objects.
-        // Each question object should have the following structure:
-        // {
-        //     id: 'q1',
-        //     question: 'Your question text here?',
-        //     options: [
-        //         { text: 'Option A', isCorrect: false },
-        //         { text: 'Option B', isCorrect: true },
-        //         { text: 'Option C', isCorrect: false },
-        //         { text: 'Option D', isCorrect: false }
-        //     ]
-        // },
-        // Ensure that you have 80 such objects in the array.
-        // ============================
-        
-        
+        // Replace the following array with your own questions
+      
 [
 
 {
@@ -1350,7 +1319,6 @@
   ]
 },
 ]
-
         // Function to shuffle an array using Fisher-Yates algorithm
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -1364,13 +1332,13 @@
         function renderQuestions() {
             const quizForm = document.getElementById('quizForm');
             const questionsArray = getQuestions(); // Retrieve the questions array
-            if (!questionsArray || !Array.isArray(questionsArray) || questionsArray.length < 80) {
-                quizForm.innerHTML = '<p>Insufficient questions available. Please ensure there are at least 80 questions in the questions array.</p>';
+            if (!questionsArray || !Array.isArray(questionsArray) || questionsArray.length < 25) {
+                quizForm.innerHTML = '<p>Insufficient questions available. Please ensure there are at least 25 questions in the questions array.</p>';
                 return;
             }
 
-            // Randomly select 80 questions from the available questions
-            const selectedQuestions = getRandomQuestions(questionsArray, 80);
+            // Randomly select 25 questions from the available questions
+            const selectedQuestions = getRandomQuestions(questionsArray, 25);
 
             // Assign shuffledQuestions to the global variable
             shuffledQuestions = shuffleArray([...selectedQuestions]); // Create a copy and shuffle
@@ -1437,7 +1405,7 @@
 
         // Function to retrieve the questions array
         function getQuestions() {
-            // Ensure that the 'questions' array is defined and contains 80 questions
+            // Replace this with your actual questions array
             return questions; // Assuming 'questions' is defined globally
         }
 
@@ -1495,9 +1463,9 @@
         // Initialize the quiz on page load
         window.onload = function () {
             renderQuestions(); // Render questions on page load
-            const thirtyMinutes = 60 * 30, // 30 minutes in seconds
+            const tenMinutes = 60 * 10, // 10 minutes in seconds
                   display = document.getElementById('timer');
-            startTimer(thirtyMinutes, display);
+            startTimer(tenMinutes, display);
         };
 
         // Function to check answers and display the result
